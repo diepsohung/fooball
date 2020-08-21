@@ -7,10 +7,13 @@ require "terminal-table"
 require "fooball/version"
 require "fooball/constants"
 require "fooball/errors"
+require "fooball/utils"
 
-require "fooball/api/competition"
+require "fooball/api/match"
 
-require "fooball/utils/setup"
-require "fooball/utils/view"
+require "fooball/command/setup"
+require "fooball/command/match"
+
+require "fooball/view/match/list"
 
 require "fooball/cli"

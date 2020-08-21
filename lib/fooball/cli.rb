@@ -3,21 +3,19 @@ module Fooball
 
     desc "setup", "Claim your token via: https://www.football-data.org/client/register"
     def setup
-      Fooball::Setup.execute
+      Fooball::Command::Setup.execute
     end
 
-    def help
-      puts "FOOBALL, a place for developers to play with football results on terminal."
-
-      competitions = []
-      Fooball::COMPETITIONS.each do |competition, info|
-        competitions << ["#{competition}", info[:code], info[:code_alias], "#{info[:country]}"]
-      end
-      table = Terminal::Table.new(title: "Available competitions", headings: ["Competition", "Code", "Alias", "Country"], rows: competitions)
-      puts table
-
-      super
+    desc "match", "List the matches with options"
+    method_option :league, aliases: "-l"
+    method_option :season, aliases: "-s"
+    method_option :from, aliases: "-f"
+    method_option :to, aliases: "-t"
+    def match
+      Fooball.require_setup_command!
+      Fooball::Command::Match.execute(options)
     end
+    default_task :match
 
   end
 end

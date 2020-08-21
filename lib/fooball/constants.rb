@@ -1,7 +1,8 @@
 module Fooball
   DEFAULT_CONFIG_FILE_PATH = "~/.fooball.config.json".freeze
   REGISTER_LINK = "https://www.football-data.org/client/register".freeze
-  API_ENDPOINT = "https://api.football-data.org/v2/competitions".freeze
+  API_ENDPOINT = "https://api.football-data.org/v2".freeze
+
   COLOR = {
     "red" => 31,
     "green" => 32,
@@ -11,6 +12,7 @@ module Fooball
     "cyan" => 36,
     "white" => 37,
   }.freeze
+
   COMPETITIONS = {
     "Premier League" => { code: "PL", id: 2021, country: "England" },
     "Championship" => { code: "ELC", id: 2016, country: "England" },
@@ -25,4 +27,6 @@ module Fooball
     "Série A" => { code: "BSA", id: 2013, country: "Brazil" },
     "World Cup" => { code: "WC", id: 2000, country: "World" },
   }.freeze
+
+  COMPETITION_CODES = ["PL", "ELC", "PD", "BL1", "SA", "FL1", "EC", "CL", "DED", "PPL", "BSA", "WC"].freeze
 end

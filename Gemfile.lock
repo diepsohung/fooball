@@ -3,9 +3,9 @@ PATH
   specs:
     fooball (0.1.0)
       httparty (~> 0.17.3)
-      terminal-table (~> 1.8.0)
+      terminal-table (~> 1.8)
       thor (~> 1.0.1)
-      tty-prompt (~> 0.22.0)
+      tty-prompt (~> 0.22)
 
 GEM
   remote: https://rubygems.org/
