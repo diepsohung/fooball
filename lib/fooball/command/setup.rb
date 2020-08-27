@@ -1,6 +1,7 @@
 module Fooball
   module Command
     class Setup
+
       attr_accessor :config
 
       def initialize
@@ -13,13 +14,12 @@ module Fooball
         setup_token
         setup_timezone
         save_config_to_file
-
       rescue TTY::Reader::InputInterrupt
         puts Fooball.colorize("\n\nBYE BYE\n", "yellow")
       end
 
       def self.execute
-        self.new.execute
+        new.execute
       end
 
       private
@@ -61,6 +61,7 @@ module Fooball
 
         puts Fooball.colorize("Your token is saved at #{DEFAULT_CONFIG_FILE_PATH}", "green")
       end
+
     end
   end
 end

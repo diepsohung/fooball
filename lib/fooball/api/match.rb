@@ -1,6 +1,7 @@
 module Fooball
   module API
     module Match
+
       extend self
 
       def list(options)

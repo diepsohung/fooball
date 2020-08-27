@@ -1,10 +1,11 @@
 module Fooball
   module View
     module List
+
       extend self
 
       def render(data)
-        table = Terminal::Table.new do |table|
+        terminal_table = Terminal::Table.new do |table|
           table.title = data.competition.name
           table.style = { width: 100, all_separators: true, alignment: :center }
           table.align_column(1, :right)
@@ -17,13 +18,13 @@ module Fooball
               table.add_row([
                 stage_start_style(match),
                 match_information_style(match),
-                match.status
+                match.status,
               ])
             end
           end
         end
 
-        puts table
+        puts terminal_table
       end
 
       private
@@ -31,7 +32,7 @@ module Fooball
       def stage_start_style(match)
         [
           match.stage,
-          Fooball.colorize(Fooball.format_time(match.utcDate), "yellow")
+          Fooball.colorize(Fooball.format_time(match.utcDate), "yellow"),
         ].join("\n")
       end
 
@@ -44,7 +45,7 @@ module Fooball
         )
       end
 
-      def match_result_style(home_team:,  home_team_score:, away_team:, away_team_score:)
+      def match_result_style(home_team:, home_team_score:, away_team:, away_team_score:)
         return match_not_started_style(home_team, away_team) if home_team_score.nil?
 
         if home_team_score > away_team_score
@@ -71,6 +72,7 @@ module Fooball
       def match_not_started_style(home_team, away_team)
         "#{home_team} ? - ? #{away_team}"
       end
+
     end
   end
 end

@@ -1,7 +1,8 @@
 module Fooball
-  DEFAULT_CONFIG_FILE_PATH = "~/.fooball.config.json"
-  REGISTER_LINK = "https://www.football-data.org/client/register"
-  API_ENDPOINT = "https://api.football-data.org/v2"
+
+  DEFAULT_CONFIG_FILE_PATH = "~/.fooball.config.json".freeze
+  REGISTER_LINK = "https://www.football-data.org/client/register".freeze
+  API_ENDPOINT = "https://api.football-data.org/v2".freeze
   DEFAULT_DAYS_OPTION = 5
 
   COLOR = {
@@ -12,7 +13,7 @@ module Fooball
     "purple" => 35,
     "cyan" => 36,
     "white" => 37,
-  }
+  }.freeze
 
   COMPETITIONS = {
     "Premier League" => { code: "PL", id: 2021, country: "England" },
@@ -27,9 +28,9 @@ module Fooball
     "Primeira Liga" => { code: "PPL", id: 2017, country: "Portugal" },
     "Série A" => { code: "BSA", id: 2013, country: "Brazil" },
     "World Cup" => { code: "WC", id: 2000, country: "World" },
-  }
+  }.freeze
 
-  COMPETITION_CODES = ["PL", "ELC", "PD", "BL1", "SA", "FL1", "EC", "CL", "DED", "PPL", "BSA", "WC"]
+  COMPETITION_CODES = %w[PL ELC PD BL1 SA FL1 EC CL DED PPL BSA WC].freeze
 
   POWERFUL_TEAMS = [
     # England
@@ -54,5 +55,6 @@ module Fooball
     { id: 113, name: "SSC Napoli", tla: "NAP" },
     # France
     { id: 524, name: "Paris Saint-Germain", tla: "PSG" },
-  ]
+  ].freeze
+
 end

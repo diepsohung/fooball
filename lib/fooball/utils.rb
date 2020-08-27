@@ -1,8 +1,9 @@
 module Fooball
+
   extend self
 
   def colorize(string, color)
-    raise InvalidColorError, "Faield to fetch color, valid colors: #{COLOR.keys.join(', ')}" unless COLOR.keys.include?(color)
+    raise InvalidColorError.new("Faield to fetch color, valid colors: #{COLOR.keys.join(", ")}") unless COLOR.keys.include?(color)
 
     "\e[#{COLOR.fetch(color)}m#{string}\e[0m"
   end
@@ -12,9 +13,9 @@ module Fooball
 
     competitions = []
     COMPETITIONS.each do |competition, info|
-      competitions << ["#{competition}", info[:code], info[:code_alias], "#{info[:country]}"]
+      competitions << [competition, info[:code], info[:code_alias], info[:country]]
     end
-    table = Terminal::Table.new(title: "Available competitions", headings: ["Competition", "Code", "Alias", "Country"], rows: competitions)
+    table = Terminal::Table.new(title: "Available competitions", headings: %w[Competition Code Alias Country], rows: competitions)
 
     puts table
   end
@@ -30,7 +31,6 @@ module Fooball
 
   def require_league_option(league)
     detect_alias(league)
-
   rescue InvalidLeagueOptionError => exception
     puts colorize(exception.message, "red")
     introduce_league_codes
@@ -40,6 +40,7 @@ module Fooball
   def detect_alias(league)
     league = league.upcase
     return if COMPETITION_CODES.include?(league)
+
     league_alias = COMPETITIONS.values.detect { |competition| competition[:code_alias] == league }
     return league_alias[:code] if league_alias
 
@@ -73,7 +74,6 @@ module Fooball
 
   def require_success_response!(parsed_response)
     raise ApiResponseError.new(parsed_response["message"]) if parsed_response["errorCode"] || parsed_response["error"]
-
   rescue ApiResponseError => exception
     puts colorize(exception.message, "red")
     exit
@@ -82,9 +82,10 @@ module Fooball
   def require_setup_command
     config_path = File.expand_path(DEFAULT_CONFIG_FILE_PATH)
 
-    unless File.exists?(config_path)
+    unless File.exist?(config_path)
       puts "Run #{colorize("`fooball setup`", "green")} to configure your credentials."
       exit
     end
   end
+
 end
