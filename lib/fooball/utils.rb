@@ -7,17 +7,6 @@ module Fooball
     "\e[#{COLOR.fetch(color)}m#{string}\e[0m"
   end
 
-  def format_date(date)
-    date.strftime("%Y-%m-%d")
-  end
-
-  def require_league_option(league)
-    unless detect_alias(league)
-      introduce_league_codes
-      exit
-    end
-  end
-
   def introduce_league_codes
     puts "FOOBALL, a place for developers to play with football results on terminal."
 
@@ -30,37 +19,67 @@ module Fooball
     puts table
   end
 
+  def format_date(date)
+    # Valid date params is YYYY-MM-DD
+    date.strftime("%Y-%m-%d")
+  end
+
+  def format_time(time)
+    (Time.parse(time) + (Config.fetch(:timezone) * 3600)).strftime("%F %H:%M")
+  end
+
+  def require_league_option(league)
+    detect_alias(league)
+
+  rescue InvalidLeagueOptionError => exception
+    puts colorize(exception.message, "red")
+    introduce_league_codes
+    exit
+  end
+
   def detect_alias(league)
+    league = league.upcase
     return if COMPETITION_CODES.include?(league)
-    league_alias = COMPETITIONS.values.detect { |league| league[:code_alias] == league }
+    league_alias = COMPETITIONS.values.detect { |competition| competition[:code_alias] == league }
     return league_alias[:code] if league_alias
 
-    puts colorize("Option --league is required. Please select the correct one.", "red")
-    false
+    raise InvalidLeagueOptionError.new("Option --league is invalid. Please select the correct code/alias.")
   end
 
   def request_headers
-    config_path = File.expand_path(DEFAULT_CONFIG_FILE_PATH)
-    credentials = JSON.load(File.read(config_path))
-
-    { "X-Auth-Token" => credentials["token"], "Content-Type" => "application/json" }
+    { "X-Auth-Token" => Config.fetch(:token), "Content-Type" => "application/json" }
   end
 
-  def build_query_params(options)
-    # Create a new hash to rename the options
-    # The original Thor::CoreExt::HashWithIndifferentAccess caused FrozenError
-    params = Hash.new(options)
-    params["dateFrom"] = options["from"] || format_date(Date.today.prev_day)
-    params["dateTo"] = options["to"] || format_date(Date.today.next_day)
-    params["plan"] = "TIER_ONE"
+  def build_query_params(params)
+    # Using free tier by default
+    params.plan = "TIER_ONE"
+    params.status&.upcase!
 
-    params.delete("from")
-    params.delete("to")
+    # The default period will get 5 days since --from option.
+    # If no --from provided, we took yesterday to the next 5 days.
+    if params.season.nil?
+      params.dateFrom = params.from || format_date(Date.today.prev_day)
+      days = params.days.to_i.positive? ? params.days.to_i : DEFAULT_DAYS_OPTION
+      params.dateTo = format_date(Date.parse(params.dateFrom) + days)
+    end
 
-    params.map { |option, value| "#{option}=#{value}" }.join("&")
+    # Delete unnecessary params out of the final params builder.
+    params.delete_field(:from) if params.from
+    params.delete_field(:days) if params.days
+    params.delete_field(:league)
+
+    params.to_h.map { |option, value| "#{option}=#{value}" }.join("&")
   end
 
-  def require_setup_command!
+  def require_success_response!(parsed_response)
+    raise ApiResponseError.new(parsed_response["message"]) if parsed_response["errorCode"] || parsed_response["error"]
+
+  rescue ApiResponseError => exception
+    puts colorize(exception.message, "red")
+    exit
+  end
+
+  def require_setup_command
     config_path = File.expand_path(DEFAULT_CONFIG_FILE_PATH)
 
     unless File.exists?(config_path)

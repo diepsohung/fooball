@@ -7,6 +7,8 @@ require "terminal-table"
 require "fooball/version"
 require "fooball/constants"
 require "fooball/errors"
+require "fooball/easy_hash"
+require "fooball/config"
 require "fooball/utils"
 
 require "fooball/api/match"

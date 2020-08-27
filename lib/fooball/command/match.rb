@@ -4,9 +4,8 @@ module Fooball
       extend self
 
       def execute(options)
-        Fooball.require_league_option(options["league"])
-        data = Fooball::API::Match.list(options)
-        Fooball::View::List.render(data)
+        Fooball.require_league_option(options.league)
+        Fooball::API::Match.list(options)
       end
     end
   end

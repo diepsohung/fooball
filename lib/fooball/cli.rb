@@ -6,14 +6,15 @@ module Fooball
       Fooball::Command::Setup.execute
     end
 
-    desc "match", "List the matches with options"
+    desc "match", "List matches with options"
     method_option :league, aliases: "-l"
     method_option :season, aliases: "-s"
     method_option :from, aliases: "-f"
-    method_option :to, aliases: "-t"
+    method_option :days, aliases: "-d"
+    method_option :status
     def match
-      Fooball.require_setup_command!
-      Fooball::Command::Match.execute(options)
+      Fooball.require_setup_command
+      Fooball::Command::Match.execute(EasyHash.to_ostruct(options))
     end
     default_task :match
 
