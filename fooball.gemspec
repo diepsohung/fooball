@@ -1,3 +1,5 @@
+lib = File.expand_path("lib", __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require_relative "lib/fooball/version"
 
 Gem::Specification.new do |spec|
@@ -26,9 +28,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |filename| File.basename(filename) }
   spec.require_paths = ["lib"]
 
+  spec.add_runtime_dependency "thor", "~> 1.0.1"
   spec.add_dependency "httparty", "~> 0.17.3"
   spec.add_dependency "terminal-table", "~> 1.8"
-  spec.add_dependency "thor", "~> 1.0.1"
   spec.add_dependency "tty-prompt", "~> 0.22"
   spec.add_development_dependency "rubocop", "~> 0.81"
 end

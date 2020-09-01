@@ -57,4 +57,6 @@ module Fooball
     { id: 524, name: "Paris Saint-Germain", tla: "PSG" },
   ].freeze
 
+  FOOTBALL_DATA_PARAMS = %i[dateFrom dateTo plan season status].freeze
+
 end

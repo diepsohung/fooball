@@ -14,7 +14,7 @@ module Fooball
         ).parsed_response
 
         Fooball.require_success_response!(response)
-        Fooball::View::List.render(Fooball::EasyHash.to_ostruct(response))
+        Fooball::View::List.render(Fooball::EasyHash.to_ostruct(response), options)
       end
 
     end

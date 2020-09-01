@@ -4,7 +4,7 @@ module Fooball
 
       extend self
 
-      def render(data)
+      def render(data, options = {})
         terminal_table = Terminal::Table.new do |table|
           table.title = data.competition.name
           table.style = { width: 100, all_separators: true, alignment: :center }
@@ -15,6 +15,8 @@ module Fooball
             table.headings = ["Stage/Start", "Match", "Status"]
 
             Fooball::EasyHash.array_hash_to_ostruct(data.matches).each do |match|
+              next unless in_range?(match.utcDate, options)
+
               table.add_row([
                 stage_start_style(match),
                 match_information_style(match),
@@ -28,6 +30,15 @@ module Fooball
       end
 
       private
+
+      def in_range?(utc_date, options)
+        days = options.days.to_i.positive? ? options.days.to_i : DEFAULT_DAYS_OPTION
+        date_from = options.from ? Date.parse(options.from) : Date.today.prev_day
+        date_to = date_from + days
+        local_time = Time.parse(utc_date) + Config.fetch(:timezone) * 3600
+
+        local_time.to_date.between?(date_from, date_to)
+      end
 
       def stage_start_style(match)
         [

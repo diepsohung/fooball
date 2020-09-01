@@ -20,9 +20,18 @@ module Fooball
     puts table
   end
 
-  def format_date(date)
+  def format_date(date, expand_days: 0)
+    if date.is_a?(Date)
+      formatted_date = date + expand_days
+    else
+      formatted_date = Date.parse(date) + expand_days
+    end
+
     # Valid date params is YYYY-MM-DD
-    date.strftime("%Y-%m-%d")
+    formatted_date.strftime("%Y-%m-%d")
+  rescue ArgumentError => exception
+    puts colorize(exception.message, "red")
+    exit
   end
 
   def format_time(time)
@@ -38,8 +47,10 @@ module Fooball
   end
 
   def detect_alias(league)
+    raise InvalidLeagueOptionError.new("Option --league is required. Please select the correct code/alias.") unless league
+
     league = league.upcase
-    return if COMPETITION_CODES.include?(league)
+    return league if COMPETITION_CODES.include?(league)
 
     league_alias = COMPETITIONS.values.detect { |competition| competition[:code_alias] == league }
     return league_alias[:code] if league_alias
@@ -57,19 +68,25 @@ module Fooball
     params.status&.upcase!
 
     # The default period will get 5 days since --from option.
-    # If no --from provided, we took yesterday to the next 5 days.
+    # If no --from provided, we took the results from yesterday to the next 5 days.
     if params.season.nil?
-      params.dateFrom = params.from || format_date(Date.today.prev_day)
+      # Transform abbreviated option to valid params.
+      # --from => dateFrom, --days => dateTo
+      # Let users search their timezone matches with expanding `dateFrom` before 1 day and `dateTo` after 1 day.
+      params.from ||= Date.today.prev_day
+      params.dateFrom = format_date(params.from, expand_days: -1)
       days = params.days.to_i.positive? ? params.days.to_i : DEFAULT_DAYS_OPTION
-      params.dateTo = format_date(Date.parse(params.dateFrom) + days)
+      params.dateTo = format_date(params.from, expand_days: days + 1)
+
+      puts colorize(
+        "Fetching results from #{format_date(params.from)} => #{format_date(params.from, expand_days: days)}.",
+        "yellow"
+      )
     end
 
-    # Delete unnecessary params out of the final params builder.
-    params.delete_field(:from) if params.from
-    params.delete_field(:days) if params.days
-    params.delete_field(:league)
-
-    params.to_h.map { |option, value| "#{option}=#{value}" }.join("&")
+    # Filter the valid request params by provider.
+    valid_params = params.to_h.select { |option, _value| FOOTBALL_DATA_PARAMS.include?(option) }
+    valid_params.map { |option, value| "#{option}=#{value}" }.join("&")
   end
 
   def require_success_response!(parsed_response)

@@ -109,5 +109,14 @@ Style/StringLiteralsInInterpolation:
 Style/RaiseArgs:
   EnforcedStyle: compact
 
+Style/ConditionalAssignment:
+  Enabled: false
+
 Lint/NonDeterministicRequireOrder:
   Enabled: false
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true

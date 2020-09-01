@@ -20,5 +20,3 @@ module Fooball
 
   end
 end
-
-Fooball::CLI.start(ARGV)
