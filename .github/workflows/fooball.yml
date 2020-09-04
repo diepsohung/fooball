@@ -31,3 +31,5 @@ jobs:
       run: bundle install
     - name: Run Rubocop
       run: bundle exec rubocop
+    - name: Run RSpec
+      run: bundle exec rspec --color
