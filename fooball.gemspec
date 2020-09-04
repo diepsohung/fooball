@@ -32,5 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "tty-prompt", "~> 0.22"
   spec.add_dependency "httparty", "~> 0.17.3"
   spec.add_dependency "terminal-table", "~> 1.8"
-  spec.add_development_dependency "rubocop", "~> 0.81"
+  spec.add_development_dependency "rubocop", "0.81"
 end

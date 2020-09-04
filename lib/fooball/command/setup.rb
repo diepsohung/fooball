@@ -15,7 +15,7 @@ module Fooball
         setup_timezone
         save_config_to_file
       rescue TTY::Reader::InputInterrupt
-        puts Fooball.colorize("\n\nBYE BYE\n", "yellow")
+        $stdout.puts Fooball.colorize("\n\nBYE BYE\n", "yellow")
       end
 
       def self.execute
@@ -43,7 +43,7 @@ module Fooball
         token = tty.ask("Paste your token: ", required: true)
 
         if token.nil?
-          puts Fooball.colorize("Token is not provided, skipping ...", "red")
+          $stdout.puts Fooball.colorize("Token is not provided, skipping ...", "red")
         else
           config[:token] = token
         end
@@ -59,7 +59,7 @@ module Fooball
         file_content = JSON.dump(config)
         File.write(File.expand_path(DEFAULT_CONFIG_FILE_PATH), file_content)
 
-        puts Fooball.colorize("Your token is saved at #{DEFAULT_CONFIG_FILE_PATH}", "green")
+        $stdout.puts Fooball.colorize("Your token is saved at #{DEFAULT_CONFIG_FILE_PATH}", "green")
       end
 
     end

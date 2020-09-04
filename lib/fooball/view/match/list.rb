@@ -26,7 +26,7 @@ module Fooball
           end
         end
 
-        puts terminal_table
+        $stdout.puts terminal_table
       end
 
       private

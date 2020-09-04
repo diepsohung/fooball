@@ -13,8 +13,7 @@ module Fooball
           headers: Fooball.request_headers
         ).parsed_response
 
-        Fooball.require_success_response!(response)
-        Fooball::View::List.render(Fooball::EasyHash.to_ostruct(response), options)
+        Fooball::View::List.render(Fooball::EasyHash.to_ostruct(response), options) if Fooball.success_response?(response)
       end
 
     end

@@ -9,15 +9,13 @@ module Fooball
   end
 
   def introduce_league_codes
-    puts "FOOBALL, a place for developers to play with football results on terminal."
-
     competitions = []
     COMPETITIONS.each do |competition, info|
       competitions << [competition, info[:code], info[:code_alias], info[:country]]
     end
     table = Terminal::Table.new(title: "Available competitions", headings: %w[Competition Code Alias Country], rows: competitions)
 
-    puts table
+    $stdout.puts table
   end
 
   def format_date(date, expand_days: 0)
@@ -30,7 +28,7 @@ module Fooball
     # Valid date params is YYYY-MM-DD
     formatted_date.strftime("%Y-%m-%d")
   rescue ArgumentError => exception
-    puts colorize(exception.message, "red")
+    $stderr.puts colorize(exception.message, "red")
     exit
   end
 
@@ -38,16 +36,15 @@ module Fooball
     (Time.parse(time) + (Config.fetch(:timezone) * 3600)).strftime("%F %H:%M")
   end
 
-  def require_league_option(league)
+  def valid_league?(league)
     detect_alias(league)
   rescue InvalidLeagueOptionError => exception
-    puts colorize(exception.message, "red")
+    $stderr.puts colorize(exception.message, "red")
     introduce_league_codes
-    exit
   end
 
   def detect_alias(league)
-    raise InvalidLeagueOptionError.new("Option --league is required. Please select the correct code/alias.") unless league
+    raise Fooball::InvalidLeagueOptionError.new("Option --league is required. Please select the correct code/alias.") if league.nil?
 
     league = league.upcase
     return league if COMPETITION_CODES.include?(league)
@@ -78,7 +75,7 @@ module Fooball
       days = params.days.to_i.positive? ? params.days.to_i : DEFAULT_DAYS_OPTION
       params.dateTo = format_date(params.from, expand_days: days + 1)
 
-      puts colorize(
+      $stdout.puts colorize(
         "Fetching results from #{format_date(params.from)} => #{format_date(params.from, expand_days: days)}.",
         "yellow"
       )
@@ -89,18 +86,18 @@ module Fooball
     valid_params.map { |option, value| "#{option}=#{value}" }.join("&")
   end
 
-  def require_success_response!(parsed_response)
+  def success_response?(parsed_response)
     raise ApiResponseError.new(parsed_response["message"]) if parsed_response["errorCode"] || parsed_response["error"]
   rescue ApiResponseError => exception
-    puts colorize(exception.message, "red")
-    exit
+    $stdout.puts colorize(exception.message, "red")
+    false
   end
 
   def require_setup_command
     config_path = File.expand_path(DEFAULT_CONFIG_FILE_PATH)
 
     unless File.exist?(config_path)
-      puts "Run #{colorize("`fooball setup`", "green")} to configure your credentials."
+      $stdout.puts "Run #{colorize("`fooball setup`", "green")} to configure your credentials."
       exit
     end
   end
