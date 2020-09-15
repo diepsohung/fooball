@@ -87,7 +87,10 @@ module Fooball
     return true if response.success?
 
     parsed_response = response.parsed_response
-    raise ApiResponseError.new(colorize(parsed_response["message"], "red")) if parsed_response["errorCode"] || parsed_response["error"]
+
+    if parsed_response["errorCode"] || parsed_response["error"]
+      raise ApiResponseError.new(colorize(parsed_response["message"], "red"))
+    end
   end
 
   def command_setup?

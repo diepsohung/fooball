@@ -33,7 +33,7 @@ module Fooball
 
       def in_range?(utc_date, options)
         days = options.days.to_i.positive? ? options.days.to_i : DEFAULT_DAYS_OPTION
-        date_from = options.from ? Date.parse(options.from) : Date.today.prev_day
+        date_from = options.from.is_a?(Date) ? options.from : Date.today.prev_day
         date_to = date_from + days
         local_time = Time.parse(utc_date) + Config.fetch(:timezone) * 3600
 
