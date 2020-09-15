@@ -1,5 +1,5 @@
 module Fooball
-  class EasyHash
+  class MagicHash
 
     def self.to_ostruct(hash)
       OpenStruct.new(hash.each_with_object({}) do |(key, value), memory|
