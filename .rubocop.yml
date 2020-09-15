@@ -114,6 +114,8 @@ Style/ConditionalAssignment:
 
 Style/StderrPuts:
   Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
 
 Lint/NonDeterministicRequireOrder:
   Enabled: false

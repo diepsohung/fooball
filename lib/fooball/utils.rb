@@ -27,9 +27,6 @@ module Fooball
 
     # Valid date params is YYYY-MM-DD
     formatted_date.strftime("%Y-%m-%d")
-  rescue ArgumentError => exception
-    $stderr.puts colorize(exception.message, "red")
-    exit
   end
 
   def format_time(time)
@@ -83,23 +80,21 @@ module Fooball
 
     # Filter the valid request params by provider.
     valid_params = params.to_h.select { |option, _value| FOOTBALL_DATA_PARAMS.include?(option) }
-    valid_params.map { |option, value| "#{option}=#{value}" }.join("&")
+    URI.encode_www_form(valid_params)
   end
 
-  def success_response?(parsed_response)
-    raise ApiResponseError.new(parsed_response["message"]) if parsed_response["errorCode"] || parsed_response["error"]
-  rescue ApiResponseError => exception
-    $stdout.puts colorize(exception.message, "red")
-    false
+  def success_response?(response)
+    return true if response.success?
+
+    parsed_response = response.parsed_response
+    raise ApiResponseError.new(colorize(parsed_response["message"], "red")) if parsed_response["errorCode"] || parsed_response["error"]
   end
 
-  def require_setup_command
+  def command_setup?
     config_path = File.expand_path(DEFAULT_CONFIG_FILE_PATH)
+    return true if File.exist?(config_path)
 
-    unless File.exist?(config_path)
-      $stdout.puts "Run #{colorize("`fooball setup`", "green")} to configure your credentials."
-      exit
-    end
+    raise SetupRequireError.new("Run #{colorize("`fooball setup`", "green")} to configure your credentials.")
   end
 
 end

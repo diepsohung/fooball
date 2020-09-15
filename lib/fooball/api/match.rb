@@ -11,9 +11,11 @@ module Fooball
         response = HTTParty.get(
           "#{API_ENDPOINT}/competitions/#{league}/matches?#{query_params}",
           headers: Fooball.request_headers
-        ).parsed_response
+        )
 
-        Fooball::View::List.render(Fooball::EasyHash.to_ostruct(response), options) if Fooball.success_response?(response)
+        if Fooball.success_response?(response)
+          Fooball::View::List.render(Fooball::MagicHash.to_ostruct(response.parsed_response), options)
+        end
       end
 
     end

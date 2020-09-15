@@ -5,7 +5,9 @@ module Fooball
       extend self
 
       def execute(options)
-        Fooball::API::Match.list(options) if Fooball.valid_league?(options.league)
+        if Fooball.valid_league?(options.league)
+          Fooball::API::Match.list(options)
+        end
       end
 
     end

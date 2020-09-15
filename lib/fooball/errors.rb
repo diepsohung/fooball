@@ -5,5 +5,6 @@ module Fooball
   class ApiResponseError < ::ArgumentError; end
   class MissingTimeZoneError < ::RuntimeError; end
   class MissingTokenError < ::RuntimeError; end
+  class SetupRequireError < ::RuntimeError; end
 
 end

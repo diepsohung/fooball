@@ -16,8 +16,11 @@ module Fooball
     method_option :status
 
     def match
-      Fooball.require_setup_command
-      Fooball::Command::Match.execute(EasyHash.to_ostruct(options))
+      if Fooball.command_setup?
+        Fooball::Command::Match.execute(MagicHash.to_ostruct(options))
+      end
+    rescue SetupRequireError, ApiResponseError, ArgumentError => exception
+      $stdout.puts exception.message
     end
     default_task :match
 

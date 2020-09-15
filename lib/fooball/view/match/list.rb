@@ -14,7 +14,7 @@ module Fooball
           else
             table.headings = ["Stage/Start", "Match", "Status"]
 
-            Fooball::EasyHash.array_hash_to_ostruct(data.matches).each do |match|
+            Fooball::MagicHash.array_hash_to_ostruct(data.matches).each do |match|
               next unless in_range?(match.utcDate, options)
 
               table.add_row([
